@@ -336,7 +336,7 @@ class TapNetSimilarityScorer(SimilarityScorerBase):
         num_tags = support_targets.shape[-1]
         no_pad_num_tags = num_tags - 1
 
-        if no_pad_num_tags > len(self.anchor_reps) and (not label_reps or self.random_init):
+        if no_pad_num_tags > len(self.anchor_reps) and (label_reps is None or self.random_init):
             raise RuntimeError("Too few anchors")
 
         if label_reps is None and not self.random_init:
@@ -403,9 +403,9 @@ class TapNetSimilarityScorer(SimilarityScorerBase):
                 s.append(s_)
                 vh.append(vh_)
             s, vh = torch.stack(s, dim=0), torch.stack(vh, dim=0)
-        s_sum = (s >= 1e-13).sum(dim=1)
+        s_sum = max((s >= 1e-13).sum(dim=1))
         # shape (batch_size, emb_dim, D)
-        M = torch.stack([torch.transpose(vh[i][s_sum[i]:].clone(), 0, 1) for i in range(batch_size)], dim=0)
+        M = torch.stack([vh[i][:, s_sum:].clone() for i in range(batch_size)], dim=0)
 
         '''get final test data reps'''
         # project query data embedding with a MLP

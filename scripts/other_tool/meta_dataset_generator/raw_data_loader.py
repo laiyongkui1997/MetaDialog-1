@@ -378,7 +378,6 @@ class SMPDataLoader(RawDataLoaderBase):
         test_data = {}
         for one_file in test_files:
             part_data = self.unpack_train_data(one_file)
-
             for domain, data in part_data.items():
                 if domain not in test_data:
                     test_data[domain] = {"seq_ins": [], "seq_outs": [], "labels": []}
@@ -491,11 +490,11 @@ if __name__ == '__main__':
     opt.dataset = 'smp'
     opt.label_type = 'intent'
 
-    smp_path = '/Users/lyk/Work/Dialogue/FewShot/SMP/'
+    smp_path = '/Users/lyk/Work/Dialogue/FewShot/SMP/smp_data/'
     smp_loader = SMPDataLoader(opt)
 
     smp_data = smp_loader.load_data(path=smp_path)
-    train_data, dev_data, support_data = smp_data['train'], smp_data['dev'], smp_data['support']
+    train_data, dev_data, support_data, test_data = smp_data['train'], smp_data['dev'], smp_data['support'], smp_data['test']
 
     print("train: smp domain number: {}".format(len(train_data)))
     print("train: all smp domain: {}".format(train_data.keys()))
